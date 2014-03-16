@@ -1,5 +1,6 @@
 import flask
 from flask.ext.script import Manager
+from photopicker import upload
 
 
 common = flask.Blueprint('common', __name__)
@@ -13,6 +14,7 @@ def ping():
 def create_app():
     app = flask.Flask(__name__)
     app.register_blueprint(common)
+    app.register_blueprint(upload.upload)
     return app
 
 

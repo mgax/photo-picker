@@ -1,4 +1,26 @@
 html, body { height: 100%; }
+
+
 #uploader {
     height: 100%;
+}
+
+
+.photolist {
+    list-style: none;
+    background-color: black;
+    overflow: hidden;
+}
+
+.photolist li {
+    margin: 5px 15px;
+    padding: 0;
+    width: 256px;
+    height: 256px;
+    float: left;
+}
+
+.photolist li img {
+    display: block;
+    margin: auto;
 }

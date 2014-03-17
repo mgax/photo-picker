@@ -1,6 +1,20 @@
 (function() {
 'use strict';
 
+app.File = Backbone.Model.extend({
+
+    constructor: function(domFile) {
+        Backbone.Model.apply(this, []);
+        this.domFile = domFile;
+        this.set({
+            'name': domFile.name,
+            'size': domFile.size
+        });
+    }
+
+});
+
+
 app.Uploader = Backbone.View.extend({
 
     events: {
@@ -21,14 +35,8 @@ app.Uploader = Backbone.View.extend({
     on_drop: function(evt) {
         evt.preventDefault();
         var dataTransfer = evt.originalEvent.dataTransfer;
-        _.forEach(dataTransfer.files, function(file) {
-            this.collection.add(
-                new Backbone.Model({
-                    'name': file.name,
-                    'size': file.size,
-                    'file': file
-                })
-            );
+        _.forEach(dataTransfer.files, function(domFile) {
+            this.collection.add(new app.File(domFile));
         }, this);
     }
 

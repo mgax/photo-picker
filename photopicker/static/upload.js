@@ -61,9 +61,4 @@ app.UploadStatus = Backbone.View.extend({
 
 });
 
-
-app.create_uploader = function(el) {
-    return new app.Uploader({el: el});
-};
-
 })();

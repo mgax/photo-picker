@@ -25,7 +25,10 @@
   <script>
     (function() {
       'use strict';
-      app.uploader = app.create_uploader($('#uploader')[0]);
+
+      app.uploader = new app.Uploader({
+        el: $('#uploader')
+      });
     })();
   </script>
 </html>

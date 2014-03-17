@@ -4,6 +4,7 @@ import hashlib
 from pathlib import Path
 import flask
 from werkzeug.wsgi import FileWrapper
+from photopicker import models
 
 
 upload = flask.Blueprint('upload', __name__)
@@ -16,9 +17,32 @@ def create_storage(state):
     app.extensions['storage'] = FileStorage(container)
 
 
+@upload.route('/')
+def home():
+    return flask.render_template('home.html', **{
+        'album_list': models.Album.query.all(),
+    })
+
+
 @upload.route('/upload')
 def upload_page():
     return flask.render_template('upload.html')
+
+
+@upload.route('/upload/create_album', methods=['POST'])
+def create_album():
+    album = models.Album()
+    models.db.session.add(album)
+    models.db.session.commit()
+    return flask.redirect(flask.url_for('.album', album_id=album.id))
+
+
+@upload.route('/album/<album_id>')
+def album(album_id):
+    album = models.Album.query.get_or_404(album_id)
+    return flask.render_template('upload.html', **{
+        'album': album,
+    })
 
 
 @upload.route('/upload/save', methods=['POST'])

@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+  <ul class="list-unstyled">
+    {% for album in album_list %}
+      {%- set url = url_for('.album', album_id=album.id) %}
+      <li><a href="{{ url }}">{{ album.id }}</a></li>
+    {% endfor %}
+  </ul>
+
+  <form action="{{ url_for('.create_album') }}" method="post">
+    <button type="submit" class="btn btn-primary">Create album</button>
+  </form>
+{% endblock content %}

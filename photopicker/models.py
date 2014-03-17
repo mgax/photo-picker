@@ -21,6 +21,7 @@ class Photo(db.Model):
     album_id = db.Column(db.ForeignKey(Album.id))
     name = db.Column(db.String)
     storage_key = db.Column(db.String)
+    thumbnail_storage_key = db.Column(db.String)
 
     album = db.relationship(Album, backref='photos')
 

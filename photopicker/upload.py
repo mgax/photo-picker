@@ -1,6 +1,7 @@
 import tempfile
 import errno
 import hashlib
+import subprocess
 from pathlib import Path
 import flask
 from werkzeug.wsgi import FileWrapper
@@ -47,7 +48,32 @@ def save(album_id):
     request_file = flask.request.files['photo']
     storage = flask.current_app.extensions['storage']
     key = storage.create(request_file)
-    photo = models.Photo(album=album, name=request_file.name, storage_key=key)
+
+    with storage.open(key) as fp:
+        process = subprocess.Popen(
+            [
+                'convert',
+                '-define', 'jpeg:size=200x200',
+                'jpeg:-',
+                '-thumbnail', '100x100>',
+                '-background', 'black',
+                '-gravity', 'center',
+                '-extent', '256x256',
+                'jpeg:-',
+            ],
+            stdin=fp,
+            stdout=subprocess.PIPE,
+        )
+        thumbnail_key = storage.create(process.stdout)
+        process.wait()
+
+    photo = models.Photo(
+        album=album,
+        name=request_file.name,
+        storage_key=key,
+        thumbnail_storage_key=thumbnail_key,
+    )
+
     models.db.session.commit()
     return flask.jsonify(success=True, photo={'id': photo.id})
 
@@ -56,7 +82,7 @@ def save(album_id):
 def thumbnail(photo_id):
     photo = models.Photo.query.get_or_404(photo_id)
     storage = flask.current_app.extensions['storage']
-    fp = storage.open(photo.storage_key)
+    fp = storage.open(photo.thumbnail_storage_key)
     return flask.send_file(fp, mimetype='image/jpeg')
 
 

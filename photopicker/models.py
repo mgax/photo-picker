@@ -19,6 +19,7 @@ class Photo(db.Model):
 
     id = db.Column(db.String, primary_key=True, default=generate_uuid)
     album_id = db.Column(db.ForeignKey(Album.id))
+    name = db.Column(db.String)
     storage_key = db.Column(db.String)
 
     album = db.relationship(Album, backref='photos')
@@ -26,6 +27,7 @@ class Photo(db.Model):
     def as_dict(self):
         return {
             'id': self.id,
+            'name': self.name,
         }
 
 

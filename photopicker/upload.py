@@ -55,7 +55,7 @@ def save(album_id):
                 'convert',
                 '-define', 'jpeg:size=200x200',
                 'jpeg:-',
-                '-thumbnail', '100x100>',
+                '-thumbnail', '256x256>',
                 '-background', 'black',
                 '-gravity', 'center',
                 '-extent', '256x256',
@@ -69,7 +69,7 @@ def save(album_id):
 
     photo = models.Photo(
         album=album,
-        name=request_file.name,
+        name=request_file.filename,
         storage_key=key,
         thumbnail_storage_key=thumbnail_key,
     )

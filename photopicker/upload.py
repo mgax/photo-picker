@@ -50,12 +50,10 @@ def generate_thumbnail(photo):
         process = subprocess.Popen(
             [
                 'convert',
-                '-define', 'jpeg:size=200x200',
+                '-define', 'jpeg:size=400x400',
                 'jpeg:-',
-                '-thumbnail', '256x256>',
-                '-background', 'black',
-                '-gravity', 'center',
-                '-extent', '256x256',
+                '-auto-orient',
+                '-thumbnail', '256x256',
                 'jpeg:-',
             ],
             stdin=fp,

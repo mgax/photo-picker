@@ -27,7 +27,8 @@
       'use strict';
 
       app.uploader = new app.Uploader({
-        el: $('#uploader')
+        el: $('#uploader'),
+        uploadUrl: {{ url_for('.save')|tojson }}
       });
     })();
   </script>

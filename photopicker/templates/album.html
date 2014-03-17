@@ -21,6 +21,10 @@
       uploadUrl: {{ url_for('.save', album_id=album.id)|tojson }}
     });
 
+    app.uploader.on('uploadFinished', function(photo) {
+        app.photoCollection.add(new app.Photo(photo.toJSON()));
+    });
+
     app.photoList = new app.PhotoList({
         collection: app.photoCollection
     });

@@ -95,6 +95,7 @@ app.Uploader = Backbone.View.extend({
             this.busy = false;
             this.render();
             if(! err) {
+                this.trigger('uploadFinished', photo);
                 this.uploadNext();
             }
         }, this));
@@ -140,6 +141,7 @@ app.PhotoList = Backbone.View.extend({
 
     initialize: function() {
         this.render();
+        this.collection.on('add remove change', _.bind(this.render, this));
     },
 
     render: function() {

@@ -94,11 +94,22 @@ app.UploadStatus = Backbone.View.extend({
     },
 
     render: function() {
-        var byteCount = this.collection.reduce(
-            function(sum, f) { return sum + f.get('size'); }, 0);
+        var bytesTotal = 0, bytesDone = 0;
+        this.collection.forEach(function(file) {
+            var size = file.get('size');
+            bytesTotal += size;
+            if(file.get('state') == 'done') {
+                bytesDone += size;
+            }
+        });
+
+        var percent = 0;
+        if(bytesTotal > 0) {
+            percent = Math.round(100 * bytesDone / bytesTotal);
+        }
+
         this.$el.html(
-            "uploading " + this.collection.length + " files " +
-            "(" + byteCount + " bytes)"
+            "uploading " + this.collection.length + " files: " + percent + "%"
         );
     }
 

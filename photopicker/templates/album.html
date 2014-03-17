@@ -14,8 +14,7 @@
 
     app.uploader = new app.Uploader({
       el: $('#uploader'),
-      uploadUrl: {{ url_for('.save')|tojson }},
-      createAlbumUrl: {{ url_for('.create_album')|tojson }}
+      uploadUrl: {{ url_for('.save', album_id=album.id)|tojson }}
     });
   })();
 </script>

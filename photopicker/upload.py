@@ -40,8 +40,8 @@ def album(album_id):
     })
 
 
-@upload.route('/upload/save', methods=['POST'])
-def save():
+@upload.route('/upload/save/<album_id>', methods=['POST'])
+def save(album_id):
     file = flask.request.files['file']
     storage = flask.current_app.extensions['storage']
     key = storage.create(file)

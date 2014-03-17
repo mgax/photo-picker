@@ -43,7 +43,12 @@ app.UploadStatus = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.html("uploading (" + this.collection.length + " files)");
+        var byteCount = this.collection.reduce(
+            function(sum, f) { return sum + f.get('size'); }, 0);
+        this.$el.html(
+            "uploading " + this.collection.length + " files " +
+            "(" + byteCount + " bytes)"
+        );
     }
 
 });

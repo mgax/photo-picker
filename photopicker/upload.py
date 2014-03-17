@@ -24,11 +24,6 @@ def home():
     })
 
 
-@upload.route('/upload')
-def upload_page():
-    return flask.render_template('upload.html')
-
-
 @upload.route('/upload/create_album', methods=['POST'])
 def create_album():
     album = models.Album()
@@ -40,7 +35,7 @@ def create_album():
 @upload.route('/album/<album_id>')
 def album(album_id):
     album = models.Album.query.get_or_404(album_id)
-    return flask.render_template('upload.html', **{
+    return flask.render_template('album.html', **{
         'album': album,
     })
 

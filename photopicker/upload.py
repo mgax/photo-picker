@@ -42,11 +42,13 @@ def album(album_id):
 
 @upload.route('/upload/save/<album_id>', methods=['POST'])
 def save(album_id):
-    file = flask.request.files['file']
+    album = models.Album.query.get_or_404(album_id)
+    request_file = flask.request.files['photo']
     storage = flask.current_app.extensions['storage']
-    key = storage.create(file)
-    print 'saved file at', key
-    return flask.jsonify(success=True)
+    key = storage.create(request_file)
+    photo = models.Photo(album=album, name=request_file.name, storage_key=key)
+    models.db.session.commit()
+    return flask.jsonify(success=True, photo={'id': photo.id})
 
 
 def _ensure(p, parents=True):

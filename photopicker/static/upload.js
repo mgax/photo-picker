@@ -1,7 +1,7 @@
 (function() {
 'use strict';
 
-app.File = Backbone.Model.extend({
+app.PhotoUploader = Backbone.Model.extend({
 
     constructor: function(domFile) {
         Backbone.Model.apply(this, []);
@@ -16,7 +16,7 @@ app.File = Backbone.Model.extend({
     upload: function(url, callback) {
         this.set('state', 'uploading');
         var formData = new FormData();
-        formData.append("file", this.domFile);
+        formData.append("photo", this.domFile);
         $.ajax({
             url: url,
             type: "POST",
@@ -60,8 +60,8 @@ app.Uploader = Backbone.View.extend({
         evt.preventDefault();
         var dataTransfer = evt.originalEvent.dataTransfer;
         _.forEach(dataTransfer.files, function(domFile) {
-            var file = new app.File(domFile);
-            this.collection.add(file);
+            var photo = new app.PhotoUploader(domFile);
+            this.collection.add(photo);
         }, this);
 
         if(! this.busy) {
@@ -70,11 +70,11 @@ app.Uploader = Backbone.View.extend({
     },
 
     uploadNext: function() {
-        var file = this.collection.findWhere({state: 'queued'});
-        if(! file) { return; }
+        var photo = this.collection.findWhere({state: 'queued'});
+        if(! photo) { return; }
         this.busy = true;
 
-        file.upload(this.uploadUrl, _.bind(function(err) {
+        photo.upload(this.uploadUrl, _.bind(function(err) {
             this.busy = false;
             this.render();
             if(! err) {
@@ -95,10 +95,10 @@ app.UploadStatus = Backbone.View.extend({
 
     render: function() {
         var bytesTotal = 0, bytesDone = 0;
-        this.collection.forEach(function(file) {
-            var size = file.get('size');
+        this.collection.forEach(function(photo) {
+            var size = photo.get('size');
             bytesTotal += size;
-            if(file.get('state') == 'done') {
+            if(photo.get('state') == 'done') {
                 bytesDone += size;
             }
         });

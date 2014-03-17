@@ -7,4 +7,5 @@ MarkupSafe==0.19
 pathlib==0.97
 pip-tools==0.3.4
 SQLAlchemy==0.9.3
+waitress==0.8.8
 Werkzeug==0.9.4

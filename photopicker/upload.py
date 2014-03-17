@@ -37,6 +37,7 @@ def album(album_id):
     album = models.Album.query.get_or_404(album_id)
     return flask.render_template('album.html', **{
         'album': album,
+        'photo_list': [photo.as_dict() for photo in album.photos],
     })
 
 
@@ -49,6 +50,14 @@ def save(album_id):
     photo = models.Photo(album=album, name=request_file.name, storage_key=key)
     models.db.session.commit()
     return flask.jsonify(success=True, photo={'id': photo.id})
+
+
+@upload.route('/thumbnail/<photo_id>')
+def thumbnail(photo_id):
+    photo = models.Photo.query.get_or_404(photo_id)
+    storage = flask.current_app.extensions['storage']
+    fp = storage.open(photo.storage_key)
+    return flask.send_file(fp, mimetype='image/jpeg')
 
 
 def _ensure(p, parents=True):
@@ -72,7 +81,7 @@ class FileStorage(object):
         return self.container / 'tmp'
 
     def get_path(self, key):
-        return self.container / key[:2] / key[2:]
+        return self.container / str(key[:2]) / str(key[2:])
 
     def create(self, f):
         _ensure(self.container, parents=True)

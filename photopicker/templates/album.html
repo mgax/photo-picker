@@ -12,10 +12,21 @@
   (function() {
     'use strict';
 
+    var photo_list = {{ photo_list|tojson }};
+
+    app.photoCollection = new app.PhotoCollection(photo_list);
+
     app.uploader = new app.Uploader({
       el: $('#uploader'),
       uploadUrl: {{ url_for('.save', album_id=album.id)|tojson }}
     });
+
+    app.photoList = new app.PhotoList({
+        collection: app.photoCollection
+    });
+
+    $('#uploader').append(app.photoList.el);
+
   })();
 </script>
 {% endblock scripts %}

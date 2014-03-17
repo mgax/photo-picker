@@ -23,6 +23,11 @@ class Photo(db.Model):
 
     album = db.relationship(Album, backref='photos')
 
+    def as_dict(self):
+        return {
+            'id': self.id,
+        }
+
 
 db_manager = Manager()
 

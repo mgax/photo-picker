@@ -1,7 +1,16 @@
 (function() {
 'use strict';
 
-app.PhotoUploader = Backbone.Model.extend({
+app.Photo = Backbone.Model.extend({
+
+    getThumbnailUrl: function() {
+        return '/thumbnail/' + this.get('id');
+    }
+
+});
+
+
+app.PhotoUploader = app.Photo.extend({
 
     constructor: function(domFile) {
         Backbone.Model.apply(this, []);
@@ -25,6 +34,7 @@ app.PhotoUploader = Backbone.Model.extend({
             contentType: false,
             success: _.bind(function(response) {
                 this.set('state', 'done');
+                this.set('id', response.photo.id);
                 callback(null);
             }, this),
             error: _.bind(function(jqXHR, textStatus, errorMessage) {
@@ -33,6 +43,13 @@ app.PhotoUploader = Backbone.Model.extend({
             }, this)
         });
     }
+
+});
+
+
+app.PhotoCollection = Backbone.Collection.extend({
+
+    model:app.Photo
 
 });
 
@@ -114,5 +131,28 @@ app.UploadStatus = Backbone.View.extend({
     }
 
 });
+
+
+app.PhotoList = Backbone.View.extend({
+
+    tagName: 'ul',
+    className: 'photolist',
+
+    initialize: function() {
+        this.render();
+    },
+
+    render: function() {
+        this.$el.empty();
+        this.collection.forEach(function(photo) {
+            var li = $('<li>');
+            var img = $('<img>').attr('src', photo.getThumbnailUrl());
+            li.append(img);
+            this.$el.append(li);
+        }, this);
+    }
+
+});
+
 
 })();

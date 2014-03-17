@@ -13,7 +13,8 @@ app.File = Backbone.Model.extend({
         });
     },
 
-    upload: function(url) {
+    upload: function(url, callback) {
+        this.set('state', 'uploading');
         var formData = new FormData();
         formData.append("file", this.domFile);
         $.ajax({
@@ -22,12 +23,14 @@ app.File = Backbone.Model.extend({
             data: formData,
             processData: false,
             contentType: false,
-            success: function(response) {
-                console.log('upload success');
-            },
-            error: function(jqXHR, textStatus, errorMessage) {
-                console.log('upload failed');
-            }
+            success: _.bind(function(response) {
+                this.set('state', 'done');
+                callback(null);
+            }, this),
+            error: _.bind(function(jqXHR, textStatus, errorMessage) {
+                this.set('state', 'failed');
+                callback('upload failed');
+            }, this)
         });
     }
 
@@ -46,6 +49,7 @@ app.Uploader = Backbone.View.extend({
         this.collection = new Backbone.Collection();
         this.statusView = new app.UploadStatus({collection: this.collection});
         this.$el.append(this.statusView.el);
+        this.busy = false;
     },
 
     on_dragover: function(evt) {
@@ -60,13 +64,23 @@ app.Uploader = Backbone.View.extend({
             this.collection.add(file);
         }, this);
 
-        this.uploadNext();
+        if(! this.busy) {
+            this.uploadNext();
+        }
     },
 
     uploadNext: function() {
         var file = this.collection.findWhere({state: 'queued'});
         if(! file) { return; }
-        file.upload(this.uploadUrl);
+        this.busy = true;
+
+        file.upload(this.uploadUrl, _.bind(function(err) {
+            this.busy = false;
+            this.render();
+            if(! err) {
+                this.uploadNext();
+            }
+        }, this));
     }
 
 });

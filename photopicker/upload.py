@@ -4,6 +4,7 @@ import hashlib
 import subprocess
 from pathlib import Path
 import flask
+from flask.ext.script import Manager
 from werkzeug.wsgi import FileWrapper
 from photopicker import models
 
@@ -42,14 +43,10 @@ def album(album_id):
     })
 
 
-@upload.route('/upload/save/<album_id>', methods=['POST'])
-def save(album_id):
-    album = models.Album.query.get_or_404(album_id)
-    request_file = flask.request.files['photo']
+def generate_thumbnail(photo):
     storage = flask.current_app.extensions['storage']
-    key = storage.create(request_file)
 
-    with storage.open(key) as fp:
+    with storage.open(photo.storage_key) as fp:
         process = subprocess.Popen(
             [
                 'convert',
@@ -64,17 +61,27 @@ def save(album_id):
             stdin=fp,
             stdout=subprocess.PIPE,
         )
-        thumbnail_key = storage.create(process.stdout)
+        photo.thumbnail_storage_key = storage.create(process.stdout)
         process.wait()
+
+
+@upload.route('/upload/save/<album_id>', methods=['POST'])
+def save(album_id):
+    album = models.Album.query.get_or_404(album_id)
+    request_file = flask.request.files['photo']
+    storage = flask.current_app.extensions['storage']
+    key = storage.create(request_file)
 
     photo = models.Photo(
         album=album,
         name=request_file.filename,
         storage_key=key,
-        thumbnail_storage_key=thumbnail_key,
     )
-
     models.db.session.commit()
+
+    generate_thumbnail(photo)
+    models.db.session.commit()
+
     return flask.jsonify(success=True, photo={'id': photo.id})
 
 
@@ -84,6 +91,16 @@ def thumbnail(photo_id):
     storage = flask.current_app.extensions['storage']
     fp = storage.open(photo.thumbnail_storage_key)
     return flask.send_file(fp, mimetype='image/jpeg')
+
+
+photo_manager = Manager()
+
+
+@photo_manager.command
+def thumbnails():
+    for photo in models.Photo.query:
+        generate_thumbnail(photo)
+        models.db.session.commit()
 
 
 def _ensure(p, parents=True):

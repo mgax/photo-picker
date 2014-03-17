@@ -24,4 +24,5 @@ def create_app():
 def create_manager(app):
     manager = Manager(app)
     manager.add_command('db', models.db_manager)
+    manager.add_command('photo', upload.photo_manager)
     return manager

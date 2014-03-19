@@ -138,28 +138,56 @@ app.UploadStatus = Backbone.View.extend({
 });
 
 
+app.PhotoView = Backbone.View.extend({
+
+    tagName: 'li',
+    className: 'photo',
+
+    events: {
+        'click': 'on_click'
+    },
+
+    initialize: function() {
+        this.render();
+    },
+
+    render: function() {
+        var img = $('<img>').attr('src', this.model.getThumbnailUrl());
+        this.$el.append(img);
+    },
+
+    on_click: function(evt) {
+        evt.preventDefault();
+        var url = this.model.getDownloadUrl();
+        window.location.href = url;
+    }
+
+});
+
+
 app.PhotoList = Backbone.View.extend({
 
     tagName: 'ul',
     className: 'photolist',
 
     initialize: function() {
+        this.viewMap = {};
         this.render();
         this.collection.on('add remove change', _.bind(this.render, this));
     },
 
     render: function() {
         this.$el.empty();
+
         this.collection.forEach(function(photo) {
-            var li = $('<li>');
-            var img = $('<img>').attr('src', photo.getThumbnailUrl());
-            li.append(img);
-            this.$el.append(li);
-            li.click(function(evt) {
-                evt.preventDefault();
-                var url = photo.getDownloadUrl();
-                window.location.href = url;
-            });
+            var photoView = this.viewMap[photo.cid];
+            if(! photoView) {
+                photoView = new app.PhotoView({model: photo})
+                this.viewMap[photo.cid] = photoView;
+            }
+
+            this.$el.append(photoView.el);
+            photoView.delegateEvents();
         }, this);
     }
 

@@ -91,6 +91,19 @@ def thumbnail(photo_id):
     return flask.send_file(fp, mimetype='image/jpeg')
 
 
+@upload.route('/download/<photo_id>')
+def download(photo_id):
+    photo = models.Photo.query.get_or_404(photo_id)
+    storage = flask.current_app.extensions['storage']
+    fp = storage.open(photo.storage_key)
+    return flask.send_file(
+        fp,
+        mimetype='image/jpeg',
+        as_attachment=True,
+        attachment_filename=photo.name,
+    )
+
+
 photo_manager = Manager()
 
 

@@ -5,6 +5,10 @@ app.Photo = Backbone.Model.extend({
 
     getThumbnailUrl: function() {
         return '/thumbnail/' + this.get('id');
+    },
+
+    getDownloadUrl: function() {
+        return '/download/' + this.get('id');
     }
 
 });
@@ -151,6 +155,11 @@ app.PhotoList = Backbone.View.extend({
             var img = $('<img>').attr('src', photo.getThumbnailUrl());
             li.append(img);
             this.$el.append(li);
+            li.click(function(evt) {
+                evt.preventDefault();
+                var url = photo.getDownloadUrl();
+                window.location.href = url;
+            });
         }, this);
     }
 

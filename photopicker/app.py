@@ -30,6 +30,11 @@ def create_app():
     models.db.init_app(app)
     app.register_blueprint(common)
     app.register_blueprint(upload.upload)
+
+    if app.config.get('SENTRY_DSN'):
+        from raven.contrib.flask import Sentry
+        Sentry(app)
+
     return app
 
 

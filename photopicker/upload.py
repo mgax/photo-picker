@@ -28,6 +28,7 @@ def home():
 
 @upload.route('/upload/create_album', methods=['POST'])
 def create_album():
+    flask.abort(500)
     album = models.Album()
     models.db.session.add(album)
     models.db.session.commit()
@@ -65,6 +66,7 @@ def generate_thumbnail(photo):
 
 @upload.route('/upload/save/<album_id>', methods=['POST'])
 def save(album_id):
+    flask.abort(500)
     album = models.Album.query.get_or_404(album_id)
     request_file = flask.request.files['photo']
     storage = flask.current_app.extensions['storage']

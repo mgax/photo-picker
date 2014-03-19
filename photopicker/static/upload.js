@@ -68,8 +68,6 @@ app.Uploader = Backbone.View.extend({
     initialize: function(options) {
         this.uploadUrl = options.uploadUrl;
         this.collection = new Backbone.Collection();
-        this.statusView = new app.UploadStatus({collection: this.collection});
-        this.$el.append(this.statusView.el);
         this.busy = false;
     },
 

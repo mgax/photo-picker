@@ -139,7 +139,8 @@ app.UploadStatus = Backbone.View.extend({
 app.PhotoPreviewModal = Backbone.View.extend({
 
     events: {
-        'hidden.bs.modal': 'remove'
+        'hidden.bs.modal': 'remove',
+        'click': 'on_click'
     },
 
     initialize: function() {
@@ -170,6 +171,10 @@ app.PhotoPreviewModal = Backbone.View.extend({
         var img = $('<img class="photo-preview-img">').attr('src', url);
         this.$el.find('.modal-body').append(img);
         this.$el.find('.modal-title').text(this.model.get('name'));
+    },
+
+    on_click: function(evt) {
+        this.$el.modal('hide');
     }
 
 });

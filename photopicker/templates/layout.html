@@ -36,5 +36,7 @@
   ga('create', {{ ga_code|tojson }}, 'grep.ro');
   ga('send', 'pageview');
   </script>
+  {%- else %}
+  <script>window.ga = function() {};</script>
   {%- endif %}
 </html>

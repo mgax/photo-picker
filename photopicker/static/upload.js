@@ -203,12 +203,14 @@ app.PhotoView = Backbone.View.extend({
 
     on_click_download: function(evt) {
         evt.preventDefault();
+        ga('send', 'event', 'photo', 'download');
         var url = this.model.getDownloadUrl();
         window.location.href = url;
     },
 
     on_click_preview: function(evt) {
         evt.preventDefault();
+        ga('send', 'event', 'photo', 'preview');
         new app.PhotoPreviewModal({model: this.model});
     }
 

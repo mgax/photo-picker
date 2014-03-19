@@ -150,7 +150,9 @@ app.PhotoPreviewModal = Backbone.View.extend({
     },
 
     render: function() {
-        this.$el.attr('class', 'modal fade').html(
+        this.$el.attr('tabindex', "-1");
+        this.$el.attr('class', 'modal fade');
+        this.$el.html(
             '<div class="modal-dialog">\n' +
             '  <div class="modal-content">\n' +
             '    <div class="modal-header">\n' +

@@ -13,6 +13,13 @@ def ping():
     return 'ok'
 
 
+@common.route('/_crashme', methods=['GET', 'POST'])
+def crashme():
+    if flask.request.method == 'POST':
+        raise RuntimeError("Crashing as requested")
+    return '<form method="post"><button type="submit">crash</button></form>'
+
+
 @common.app_url_defaults
 def bust_cache(endpoint, values):
     if endpoint == 'static':

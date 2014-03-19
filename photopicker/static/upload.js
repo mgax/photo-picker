@@ -138,13 +138,51 @@ app.UploadStatus = Backbone.View.extend({
 });
 
 
+app.PhotoPreviewModal = Backbone.View.extend({
+
+    events: {
+        'hidden.bs.modal': 'remove'
+    },
+
+    initialize: function() {
+        this.render();
+        this.$el.modal();
+    },
+
+    render: function() {
+        this.$el.attr('class', 'modal fade').html(
+            '<div class="modal-dialog">\n' +
+            '  <div class="modal-content">\n' +
+            '    <div class="modal-header">\n' +
+            '      <button type="button" class="close" ' +
+                          'data-dismiss="modal" ' +
+                          'aria-hidden="true">&times;</button>\n' +
+            '      <h4 class="modal-title"></h4>\n' +
+            '    </div>\n' +
+            '    <div class="modal-body">\n' +
+            '    </div>\n' +
+            '    <div class="modal-footer">\n' +
+            '    </div>\n' +
+            '  </div>\n' +
+            '</div>\n'
+        );
+        var url = this.model.getDownloadUrl();
+        var img = $('<img class="photo-preview-img">').attr('src', url);
+        this.$el.find('.modal-body').append(img);
+        this.$el.find('.modal-title').text(this.model.get('name'));
+    }
+
+});
+
+
 app.PhotoView = Backbone.View.extend({
 
     tagName: 'li',
     className: 'photo',
 
     events: {
-        'click .photo-download': 'on_click_download'
+        'click .photo-download': 'on_click_download',
+        'click img': 'on_click_preview'
     },
 
     initialize: function() {
@@ -162,6 +200,11 @@ app.PhotoView = Backbone.View.extend({
         evt.preventDefault();
         var url = this.model.getDownloadUrl();
         window.location.href = url;
+    },
+
+    on_click_preview: function(evt) {
+        evt.preventDefault();
+        new app.PhotoPreviewModal({model: this.model});
     }
 
 });

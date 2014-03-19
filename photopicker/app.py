@@ -1,5 +1,6 @@
 import flask
 from flask.ext.script import Manager
+from pathlib import Path
 from photopicker import upload
 from photopicker import models
 
@@ -10,6 +11,17 @@ common = flask.Blueprint('common', __name__)
 @common.route('/_ping')
 def ping():
     return 'ok'
+
+
+@common.app_url_defaults
+def bust_cache(endpoint, values):
+    if endpoint == 'static':
+        filename = values['filename']
+        file_path = Path(flask.current_app.static_folder) / filename
+        if file_path.exists():
+            mtime = file_path.stat().st_mtime
+            key = ('%x' % mtime)[-6:]
+            values['t'] = key
 
 
 def create_app():

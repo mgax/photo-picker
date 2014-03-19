@@ -42,3 +42,7 @@ html, body { height: 100%; }
 .photo-preview-img {
     max-width: 100%;
 }
+
+body .modal-dialog {
+    width: 80%;
+}

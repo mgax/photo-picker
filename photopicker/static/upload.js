@@ -144,7 +144,7 @@ app.PhotoView = Backbone.View.extend({
     className: 'photo',
 
     events: {
-        'click': 'on_click'
+        'click .photo-download': 'on_click_download'
     },
 
     initialize: function() {
@@ -153,10 +153,12 @@ app.PhotoView = Backbone.View.extend({
 
     render: function() {
         var img = $('<img>').attr('src', this.model.getThumbnailUrl());
-        this.$el.append(img);
+        var download = $('<a>download</a>');
+        download.attr('class', 'photo-download btn btn-default');
+        this.$el.append(img, download);
     },
 
-    on_click: function(evt) {
+    on_click_download: function(evt) {
         evt.preventDefault();
         var url = this.model.getDownloadUrl();
         window.location.href = url;
